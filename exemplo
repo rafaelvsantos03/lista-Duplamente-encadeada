@@ -1,0 +1,164 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct no{
+	int chave;
+	struct no *ant;
+	struct no *prox;
+}TNo;
+
+void insereInicio(TNo **p, int k);
+void imprimeIF(TNo *p);
+void imprimeFI(TNo *p);
+void removerInicio(TNo **p);
+TNo *buscar(TNo *p, int k);
+void concatenarlistas(TNo **prim,TNo **prim2);
+
+int main()
+{
+	TNo *prim=NULL, *prim2=NULL, *achou=NULL;
+	insereInicio(&prim, 7);
+	insereInicio(&prim, 12);
+	insereInicio(&prim, 33);
+	insereInicio(&prim, 1);
+	printf("\nImprimindo do Inicio para o final");
+	imprimeIF(prim);
+	printf("\nImprimindo do Final para o inicio");
+	imprimeFI(prim);
+	insereInicio(&prim2, 4);
+	insereInicio(&prim2, 52);
+	insereInicio(&prim2, 83);
+	printf("\nImprimindo lista 2 do Inicio para o final");
+	imprimeIF(prim2);
+	printf("\nImprimindo lista 2 do Final para o inicio");
+	imprimeFI(prim2);
+	achou=buscar(prim, 7);
+	
+	if(achou)
+		printf("\nO elemento esta na lista posicao %p",achou);
+	else
+		printf("\nnao achou...");
+	concatenarlistas(&prim, &prim2);
+	imprimeIF(prim);
+	
+	removerInicio(&prim);
+	printf("\nImprimindo do Inicio para o final");
+	imprimeIF(prim);
+	while(prim)
+		removerInicio(&prim);//retirar todos da lista 1
+	imprimeIF(prim);
+}
+
+void concatenarlistas(TNo **prim,TNo **prim2)
+{
+	if(*prim2==NULL)
+	{
+		printf("\nLista 2 vazia!");
+	}
+	else
+	{
+		if(*prim==NULL)
+		{
+			*prim=*prim2;
+			//*prim2=NULL; //deixando a 2a lista vazia
+		}
+		else
+		{
+			TNo *paux=*prim;
+			while(paux->prox!=NULL)
+			{
+				paux=paux->prox;
+			}
+			paux->prox=*prim2;
+			(*prim2)->ant=paux;
+			//*prim2=NULL; //deixando a 2a lista vazia		
+		}
+	}
+}
+
+TNo *buscar(TNo *p, int k)
+{
+	if(p==NULL)
+		printf("\nLista vazia!");
+	else
+	{
+		while(p)
+		{
+			if(p->chave==k)
+				return p;
+			p=p->prox;
+		}
+		return NULL;
+	}
+	
+}
+void removerInicio(TNo **p)
+{
+	if(*p==NULL)
+	{
+		printf("\nLista vazia!");
+		return;	
+	}	
+	else
+	{
+		if((*p)->prox==NULL)
+		{
+			free(*p);
+			*p=NULL;
+		}
+		else
+		{
+			TNo *paux=*p;
+			*p = (*p)->prox; //antes disso poderia ser (*p)->prox->ant=NULL
+			(*p)->ant=NULL;  //da� n�o precisa dessa linha
+			free(paux);
+		}
+	}
+}
+
+void imprimeFI(TNo *p)
+{
+	if(p==NULL)
+		printf("\nLista vazia!");
+	else
+	{
+		while(p->prox!=NULL)
+		{
+			p=p->prox;//caminhar at� o �ltimo da lista
+		}
+		while(p)
+		{
+			printf("\n%d", p->chave);
+			p=p->ant;
+		}
+	}
+}
+
+void imprimeIF(TNo *p)
+{
+	if(p==NULL)
+		printf("\nLista vazia!");
+	else
+	{
+		while(p)
+		{
+			printf("\n%d",p->chave);
+			p=p->prox;
+		}
+	}
+}
+
+void insereInicio(TNo **p, int k)
+{
+	TNo *novo=NULL;
+	novo = (TNo *)malloc(sizeof(TNo));
+	if(novo)
+	{
+		novo->chave=k;
+		novo->ant=NULL;
+		novo->prox=*p;
+		if(*p)//se lista n�o for vazia
+		   (*p)->ant = novo;
+		*p = novo;
+	}
+}
